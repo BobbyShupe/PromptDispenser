@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/textName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/darker_gray" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <!-- Dispense: full button, primary -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDispense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dispense"
+                android:minWidth="120dp"
+                android:layout_marginEnd="8dp"
+                style="@style/Widget.Material3.Button" />
+
+            <!-- Reset: text styled as button -->
+            <TextView
+                android:id="@+id/btnReset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reset"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:padding="12dp"
+                android:minWidth="90dp"
+                android:gravity="center"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:textColor="?attr/colorPrimary"
+                android:background="@android:color/transparent" />
+
+            <!-- Delete: text styled as button, warning color -->
+            <TextView
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Delete"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:padding="12dp"
+                android:minWidth="90dp"
+                android:gravity="center"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:textColor="#D32F2F"
+                android:background="@android:color/transparent" />
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
