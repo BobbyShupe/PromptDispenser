@@ -6,15 +6,19 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.promptdispenser.R
 import com.example.promptdispenser.data.PromptDatabase
 import com.example.promptdispenser.data.PromptListEntity
 import com.example.promptdispenser.data.PromptRepository
 import com.example.promptdispenser.databinding.ActivityMainBinding
 import com.example.promptdispenser.databinding.DialogEditListBinding
+import com.example.promptdispenser.util.Prefs
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -32,6 +36,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Set up Toolbar
+        setSupportActionBar(binding.toolbar)
 
         adapter = PromptListAdapter(
             onDispense = { list -> startDispenser(list) },
@@ -88,6 +95,46 @@ class MainActivity : AppCompatActivity() {
         binding.fabAdd.setOnClickListener {
             showEditDialog(null)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                showDelaySettingsDialog()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun showDelaySettingsDialog() {
+        val currentDelay = Prefs.getDelaySeconds(this)
+
+        val input = android.widget.EditText(this).apply {
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            setText(currentDelay.toString())
+            hint = "Enter delay in seconds (0 = no delay)"
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Dispense Delay")
+            .setMessage("Set the delay between dispenses (in seconds). Use 0 for no delay.")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ ->
+                val inputText = input.text.toString().trim()
+                val seconds = if (inputText.isEmpty()) 0 else inputText.toIntOrNull() ?: 0
+                val clampedSeconds = seconds.coerceAtLeast(0).coerceAtMost(300)  // Max 5 minutes
+                Prefs.setDelaySeconds(this, clampedSeconds)
+                val msg = if (clampedSeconds == 0) "No delay" else "$clampedSeconds seconds"
+                Toast.makeText(this, "Delay set to $msg", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun showEditDialog(existingList: PromptListEntity?) {

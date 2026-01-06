@@ -4,6 +4,8 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +13,7 @@ import com.example.promptdispenser.data.PromptDatabase
 import com.example.promptdispenser.data.PromptListEntity
 import com.example.promptdispenser.data.PromptRepository
 import com.example.promptdispenser.databinding.ActivityDispenserBinding
+import com.example.promptdispenser.util.Prefs
 
 class DispenserActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDispenserBinding
@@ -18,6 +21,8 @@ class DispenserActivity : AppCompatActivity() {
         PromptViewModelFactory(PromptRepository(PromptDatabase.getDatabase(this).promptDao()))
     }
     private var currentList: PromptListEntity? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private var isDelayActive = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +37,9 @@ class DispenserActivity : AppCompatActivity() {
         }
 
         binding.btnNext.setOnClickListener {
-            dispenseNext()
+            if (!isDelayActive) {
+                dispenseNext()
+            }
         }
     }
 
@@ -45,6 +52,8 @@ class DispenserActivity : AppCompatActivity() {
         if (remaining == 0) {
             binding.textPreview.text = "All prompts used! Reset the list to start over."
             binding.btnNext.isEnabled = false
+        } else {
+            binding.btnNext.isEnabled = !isDelayActive
         }
     }
 
@@ -56,7 +65,7 @@ class DispenserActivity : AppCompatActivity() {
             return
         }
 
-        val nextPrompt = available.random()  // Change to available[0] for sequential
+        val nextPrompt = available.random()  // Random selection
 
         // Copy to clipboard
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -69,5 +78,29 @@ class DispenserActivity : AppCompatActivity() {
         // Mark as used
         val updated = list.copy(usedPrompts = list.usedPrompts + nextPrompt)
         viewModel.update(updated)
+        currentList = updated
+
+        updateUI()
+
+        // Start cooldown delay
+        startDelayCooldown()
+    }
+
+    private fun startDelayCooldown() {
+        val delaySeconds = Prefs.getDelaySeconds(this)
+        if (delaySeconds <= 0) return
+
+        isDelayActive = true
+        binding.btnNext.isEnabled = false
+
+        handler.postDelayed({
+            isDelayActive = false
+            updateUI()  // Re-enable if prompts remain
+        }, delaySeconds * 1000L)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
     }
 }

@@ -4,10 +4,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:title="Prompt Dispenser"
+            app:titleTextColor="@android:color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
