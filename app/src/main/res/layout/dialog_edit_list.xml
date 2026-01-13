@@ -13,7 +13,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:singleLine="true" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -23,13 +24,29 @@
         android:layout_marginTop="16dp"
         android:hint="Prompts (separated by empty line)">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editPrompts"
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:gravity="top|start"
-            android:inputType="textMultiLine|textCapSentences"
-            android:scrollbars="vertical" />
+            android:background="#000000"
+            android:overScrollMode="always"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="true"
+            android:scrollingCache="true"
+            android:isScrollContainer="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editPrompts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="300dp"
+                android:gravity="top|start"
+                android:inputType="textMultiLine|textCapSentences"
+                android:padding="16dp"
+                android:textColor="#00FF00"
+                android:textColorHint="#757575"
+                android:background="@android:color/transparent" />
+
+        </androidx.core.widget.NestedScrollView>
 
     </com.google.android.material.textfield.TextInputLayout>
 

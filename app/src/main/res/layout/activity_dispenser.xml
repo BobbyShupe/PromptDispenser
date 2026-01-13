@@ -1,42 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+android:padding="24dp">
+
+<!-- Top section: List name, status, skip buttons -->
+<TextView
+    android:id="@+id/textListName"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:layout_height="wrap_content"
+    android:textSize="24sp"
+    android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/textListName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+<TextView
+    android:id="@+id/textStatus"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/textStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/textPreview"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="32dp"
-        android:background="#11000000"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="Press Next to get a prompt"
-        android:textSize="18sp" />
+<!-- Small skip buttons – near the top, compact row -->
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:paddingHorizontal="32dp">
 
     <Button
-        android:id="@+id/btnNext"
+        android:id="@+id/btnSkipBack"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:minHeight="38dp"
+        android:minWidth="100dp"
+        android:text="BACK"
+        android:textSize="13sp"
+        android:singleLine="true"
+        android:textAllCaps="true"
+        android:backgroundTint="#424242"
+        style="@style/Widget.Material3.Button.OutlinedButton" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/btnSkipForward"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:minHeight="38dp"
+        android:minWidth="100dp"
+        android:text="SKIP"
+        android:textSize="13sp"
+        android:singleLine="true"
+        android:textAllCaps="true"
+        android:backgroundTint="#424242"
+        style="@style/Widget.Material3.Button.OutlinedButton" />
+
+</LinearLayout>
+
+<!-- Main content area -->
+<TextView
+    android:id="@+id/textPreview"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:layout_marginTop="32dp"
+    android:background="#11000000"
+    android:gravity="center"
+    android:padding="16dp"
+    android:text="Press Next to get a prompt"
+    android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tvCountdown"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Next Prompt"
-        android:textSize="20sp" />
+        android:layout_marginTop="12dp"
+        android:gravity="left"
+        android:textColor="#335533"
+        android:textSize="12sp"
+        android:visibility="gone"
+        android:text="" />
+
+<!-- Bottom: Large main action button -->
+<Button
+    android:id="@+id/btnNext"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="32dp"
+    android:layout_marginHorizontal="32dp"
+    android:minHeight="64dp"
+    android:text="Next Prompt"
+    android:textSize="20sp"
+    android:textAllCaps="false"
+    style="@style/Widget.Material3.Button" />
 
 </LinearLayout>
