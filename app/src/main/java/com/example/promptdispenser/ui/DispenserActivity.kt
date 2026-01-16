@@ -56,13 +56,18 @@ class DispenserActivity : AppCompatActivity() {
             skipBackward()
         }
 
-        // Restore state
+        // Restore state from rotation/config change
         savedInstanceState?.let {
             remainingMillis = it.getLong(KEY_REMAINING_MILLIS, 0L)
             if (remainingMillis > 0) startCountdown(remainingMillis)
         }
 
         restorePersistentCooldown()
+    }
+
+    override fun onBackPressed() {
+        // Normal back behavior: exit the activity and return to main screen
+        super.onBackPressed()
     }
 
     private fun restorePersistentCooldown() {
@@ -102,38 +107,14 @@ class DispenserActivity : AppCompatActivity() {
     }
 
     private fun dispenseNext() {
-        performDispense(copyToClipboard = true, startDelay = true, undoUsed = false)
+        performDispense(copyToClipboard = true, startDelay = true)
     }
 
     private fun skipForward() {
-        performDispense(copyToClipboard = false, startDelay = false, undoUsed = false)
+        performDispense(copyToClipboard = false, startDelay = false)
     }
 
-    private fun skipBackward() {
-        val list = currentList ?: return
-        val used = list.usedPrompts
-        if (used.isEmpty()) {
-            Toast.makeText(this, "No previous prompt to go back to", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // Undo the last dispense: remove the most recent used prompt
-        val newUsed = used.dropLast(1)
-        val previousPrompt = used.last()
-
-        val updated = list.copy(usedPrompts = newUsed)
-        viewModel.update(updated)
-        currentList = updated
-
-        binding.textPreview.text = previousPrompt
-
-        Toast.makeText(this, "Went back to previous prompt", Toast.LENGTH_SHORT).show()
-
-        updateUI()
-        // No delay affected
-    }
-
-    private fun performDispense(copyToClipboard: Boolean, startDelay: Boolean, undoUsed: Boolean) {
+    private fun performDispense(copyToClipboard: Boolean, startDelay: Boolean) {
         val list = currentList ?: return
         val available = list.allPrompts.filter { !list.usedPrompts.contains(it) }
         if (available.isEmpty()) {
@@ -141,7 +122,8 @@ class DispenserActivity : AppCompatActivity() {
             return
         }
 
-        val nextPrompt = available.random()
+        // Sequential: always take the first unused prompt
+        val nextPrompt = available.first()
 
         if (copyToClipboard) {
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -154,13 +136,7 @@ class DispenserActivity : AppCompatActivity() {
 
         binding.textPreview.text = nextPrompt
 
-        val updatedUsed = if (undoUsed) {
-            list.usedPrompts.dropLast(1)
-        } else {
-            list.usedPrompts + nextPrompt
-        }
-
-        val updated = list.copy(usedPrompts = updatedUsed)
+        val updated = list.copy(usedPrompts = list.usedPrompts + nextPrompt)
         viewModel.update(updated)
         currentList = updated
 
@@ -169,6 +145,28 @@ class DispenserActivity : AppCompatActivity() {
         if (startDelay) {
             startDelayCooldown()
         }
+    }
+
+    private fun skipBackward() {
+        val list = currentList ?: return
+        val used = list.usedPrompts
+        if (used.isEmpty()) {
+            Toast.makeText(this, "No previous prompt to go back to", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val newUsed = used.dropLast(1)
+        val previousPrompt = used.last()
+
+        val updated = list.copy(usedPrompts = newUsed)
+        viewModel.update(updated)
+        currentList = updated
+
+        binding.textPreview.text = previousPrompt
+
+        Toast.makeText(this, "Back to previous prompt", Toast.LENGTH_SHORT).show()
+
+        updateUI()
     }
 
     private fun startDelayCooldown() {
